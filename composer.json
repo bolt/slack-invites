@@ -5,6 +5,7 @@
     "type": "project",
     "require": {
         "bolt/collection": "^1.0",
+        "guzzlehttp/guzzle": "^6.3",
         "php": "^7.0",
         "silex/silex": "^2.2",
         "silex/web-profiler": "^2.0",
