@@ -1,0 +1,41 @@
+{% extends "layout.html.twig" %}
+
+{% block content %}
+    <div class="splash">
+        <div class="logos">
+            <div class="logo org"></div>
+            <div class="logo slack"></div>
+        </div>
+        <p>Join <b>{{ team }}</b> on Slack.</p>
+        <p class="status">
+        <b class="active">{{ users.active }}</b> users online now of <b class="total">{{ users.total }}</b> registered.
+        </p>
+
+        <form id="inviteform">
+            <input type="email" required name="email" placeholder="you@yourdomain.com">
+            <button id="submitbutton" class="loading">Get my Invite</button>
+        </form>
+
+        <br>
+        <br>
+        <p>Current users:</p>
+        <table class="avatar">
+            {% for row in avatars|batch(11) %}
+                <tr>
+                    {% for name, avatar in row %}<td><img src="{{ avatar }}" alt="{{ name }}"></td>{% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+
+        <div id="slackfooter">
+            PHP adaption of <a href="http://rauchg.com/slackin" target="_blank">slackin</a>
+        </div>
+
+        <link rel="stylesheet" href="{{ asset('css/site.css') }}">
+        <style type="text/css">
+            .logo.org{background-image:url({{ image }});margin-right:70px}
+        </style>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+        <script type="text/javascript" src="{{ asset('js/site.js', 'theme') }}"></script>
+    </div>
+{% endblock %}
