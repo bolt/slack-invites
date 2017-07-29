@@ -1,5 +1,3 @@
-.idea/
-node_modules/
+/config/slack.php
 /vendor/
-config/slack.php
-composer.phar
+/var/
