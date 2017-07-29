@@ -10,6 +10,7 @@
         "silex/silex": "^2.2",
         "silex/web-profiler": "^2.0",
         "symfony/asset": "^3.3",
+        "symfony/cache": "^3.3",
         "symfony/console": "^3.3",
         "symfony/css-selector": "^3.3",
         "symfony/finder": "^3.3",
