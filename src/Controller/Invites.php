@@ -3,6 +3,7 @@
 namespace Bolt\Site\SlackInvites\Controller;
 
 use Bolt\Collection\ImmutableBag;
+use Bolt\Site\SlackInvites\BadgeGenerator;
 use Bolt\Site\SlackInvites\Slack;
 use Exception;
 use Silex\Api\ControllerProviderInterface;
@@ -11,6 +12,7 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -32,6 +34,11 @@ class Invites implements ControllerProviderInterface
 
         $ctr->get('/', [$this, 'slack'])
             ->bind('slack')
+        ;
+
+        $ctr->get('/badge/{type}', [$this, 'slackBadge'])
+            ->assert('type', '(active|ratio|total)')
+            ->bind('slackBadge')
         ;
 
         $ctr->post('/invite', [$this, 'slackInvite'])
@@ -89,6 +96,27 @@ class Invites implements ControllerProviderInterface
         ];
 
         return $app['twig']->render('slack.html.twig', $context);
+    }
+
+    /**
+     * @param Application $app
+     * @param string      $type
+     *
+     * @return Response
+     */
+    public function slackBadge(Application $app, $type)
+    {
+        /** @var BadgeGenerator $generator */
+        $generator = $app['slack.badge_generator'];
+        $ttl = $app['debug'] ? -1 : 120;
+
+        $response = new Response();
+        $disposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_INLINE, $type . '.svg');
+        $response->headers->set('Content-Disposition', $disposition);
+        $response->headers->set('Content-Type', 'image/svg+xml; charset=utf-8');
+        $response->setContent($generator->get($type, $ttl));
+
+        return $response;
     }
 
     /**

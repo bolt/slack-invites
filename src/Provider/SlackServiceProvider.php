@@ -2,6 +2,7 @@
 
 namespace Bolt\Site\SlackInvites\Provider;
 
+use Bolt\Site\SlackInvites\BadgeGenerator;
 use Bolt\Site\SlackInvites\Slack;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -21,6 +22,14 @@ class SlackServiceProvider implements ServiceProviderInterface
                 $pimple['cache'],
                 $pimple['slack.team'],
                 $pimple['slack.token']
+            );
+        };
+
+        $pimple['slack.badge_generator'] = function ($pimple) {
+            return new BadgeGenerator(
+                $pimple['slack'],
+                $pimple['cache'],
+                $pimple['twig']
             );
         };
     }

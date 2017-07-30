@@ -84,7 +84,11 @@ class Slack
             }
         }
 
-        return ImmutableBag::from(['total' => $total, 'active' => $active]);
+        return ImmutableBag::from([
+            'active' => $active,
+            'total'  => $total,
+            'ratio'  => $active . ' / ' . $total,
+        ]);
     }
 
     /**
