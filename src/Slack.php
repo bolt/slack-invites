@@ -111,22 +111,6 @@ class Slack
     public function getInvite($email)
     {
         $url = 'https://' . $this->team . '.slack.com/api/users.admin.invite';
-        $options = [
-            'form_params'     => [
-                'token' => $this->token,
-                'email' => $email,
-            ],
-            'allow_redirects' => [
-                'max'             => 10,
-                'strict'          => true,
-                'referer'         => true,
-                'protocols'       => ['https'],
-                'track_redirects' => true,
-            ],
-            'timeout'         => 5,
-            'synchronous'     => true,
-        ];
-
         $request = new Request(
             'POST',
             $url,
