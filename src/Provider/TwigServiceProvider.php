@@ -5,6 +5,7 @@ namespace Bolt\Site\SlackInvites\Provider;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Silex;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * Twig service provider.
@@ -17,9 +18,15 @@ class TwigServiceProvider implements ServiceProviderInterface
     {
         $pimple->register(new Silex\Provider\TwigServiceProvider());
 
-        $pimple['twig.path'] = [
-            __DIR__ . '/../../templates',
-        ];
+        $pimple['twig.loader.filesystem'] = $pimple->extend(
+            'twig.loader.filesystem',
+            function (FilesystemLoader $loader) {
+                $loader->addPath(__DIR__ . '/../../templates', 'templates');
+
+                return $loader;
+            }
+        );
+
         $pimple['twig.options'] = [
             'cache' => __DIR__ . '/../../var/cache/twig',
         ];

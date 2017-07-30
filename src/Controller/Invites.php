@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Twig\Environment;
 
 /**
  * Slack invitations controller.
@@ -52,12 +53,13 @@ class Invites implements ControllerProviderInterface
 
             // 404.html, or 40x.html, or 4xx.html, or error.html
             $templates = [
-                'errors/' . $code . '.html.twig',
-                'errors/' . substr($code, 0, 2) . 'x.html.twig',
-                'errors/' . substr($code, 0, 1) . 'xx.html.twig',
-                'errors/default.html.twig',
+                '@templates/errors/' . $code . '.html.twig',
+                '@templates/errors/' . substr($code, 0, 2) . 'x.html.twig',
+                '@templates/errors/' . substr($code, 0, 1) . 'xx.html.twig',
+                '@templates/errors/default.html.twig',
             ];
-            $html = $app['twig']->resolveTemplate($templates)->render(['code' => $code]);
+            $twig = $app['twig'];
+            $html = $twig->resolveTemplate($templates)->render(['code' => $code]);
 
             return new Response($html, $code);
         });
@@ -72,6 +74,8 @@ class Invites implements ControllerProviderInterface
      */
     public function slack(Application $app)
     {
+        /** @var Environment $twig */
+        $twig = $app['twig'];
         /** @var Slack $slack */
         $slack = $app['slack'];
         $teamInfo = $slack->getTeamInfo();
@@ -95,7 +99,7 @@ class Invites implements ControllerProviderInterface
             'avatars' => $avatars,
         ];
 
-        return $app['twig']->render('slack.html.twig', $context);
+        return $twig->render('@templates/slack.html.twig', $context);
     }
 
     /**
