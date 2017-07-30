@@ -40,8 +40,6 @@ class Slack
         $this->cache = $cache;
         $this->team = $team;
         $this->token = $token;
-
-        $this->refresh();
     }
 
     /**
@@ -51,7 +49,7 @@ class Slack
      */
     public function getTeamName()
     {
-        return $this->teamInfo->getPath('team/name');
+        return $this->getTeamInfo()->getPath('team/name');
     }
 
     /**
@@ -63,7 +61,7 @@ class Slack
      */
     public function getTeamIcon($width = 132)
     {
-        return $this->teamInfo->getPath('team/icon/image_' . $width);
+        return $this->getTeamInfo()->getPath('team/icon/image_' . $width);
     }
 
     /**
@@ -78,7 +76,7 @@ class Slack
         $bots = 0;
 
         /** @var ImmutableBag $user */
-        foreach ($this->teamInfo->get('users') as $user) {
+        foreach ($this->getTeamInfo()->get('users') as $user) {
             if ($user->get('is_bot')) {
                 ++$bots;
                 continue;
@@ -104,6 +102,10 @@ class Slack
      */
     public function getTeamInfo()
     {
+        if ($this->teamInfo === null) {
+            $this->refresh();
+        }
+
         return $this->teamInfo;
     }
 
