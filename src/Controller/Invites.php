@@ -38,7 +38,7 @@ class Invites implements ControllerProviderInterface
         ;
 
         $ctr->get('/badge/{type}', [$this, 'slackBadge'])
-            ->assert('type', '(active|ratio|total)')
+            ->assert('type', '(active|bots|ratio|total)')
             ->bind('slackBadge')
         ;
 

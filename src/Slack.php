@@ -75,9 +75,14 @@ class Slack
     {
         $total = 0;
         $active = 0;
+        $bots = 0;
 
         /** @var ImmutableBag $user */
         foreach ($this->teamInfo->get('users') as $user) {
+            if ($user->get('is_bot')) {
+                ++$bots;
+                continue;
+            }
             ++$total;
             if ($user->get('presence') === 'active') {
                 ++$active;
@@ -86,6 +91,7 @@ class Slack
 
         return ImmutableBag::from([
             'active' => $active,
+            'bots'   => $bots,
             'total'  => $total,
             'ratio'  => $active . ' / ' . $total,
         ]);
