@@ -61,7 +61,7 @@ class Invites implements ControllerProviderInterface
     /**
      * @param Application $app
      *
-     * @return mixed
+     * @return string
      */
     public function slack(Application $app)
     {
@@ -95,7 +95,7 @@ class Invites implements ControllerProviderInterface
      * @param Application $app
      * @param Request     $request
      *
-     * @return Response
+     * @return JsonResponse
      */
     public function slackInvite(Application $app, Request $request)
     {
