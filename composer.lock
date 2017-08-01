@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "da0439a43a2b74e019adca99b717cfca",
+    "content-hash": "c3efed5da1030151e334aae02a308abf",
     "packages": [
         {
             "name": "bolt/collection",
@@ -49,16 +49,16 @@
         },
         {
             "name": "bolt/common",
-            "version": "dev-master",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bolt/common.git",
-                "reference": "0e1c4b3e14a7eda936a8dc79d4a57fdf702ce5e6"
+                "reference": "4910d2a33f18530328301f805ea840d5173f490c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bolt/common/zipball/0e1c4b3e14a7eda936a8dc79d4a57fdf702ce5e6",
-                "reference": "0e1c4b3e14a7eda936a8dc79d4a57fdf702ce5e6",
+                "url": "https://api.github.com/repos/bolt/common/zipball/4910d2a33f18530328301f805ea840d5173f490c",
+                "reference": "4910d2a33f18530328301f805ea840d5173f490c",
                 "shasum": ""
             },
             "require": {
@@ -72,7 +72,6 @@
                 "bolt/codingstyle": "^2.0@dev",
                 "escapestudios/symfony2-coding-standard": "^3.0@dev",
                 "friendsofphp/php-cs-fixer": "^2.4",
-                "lstrojny/phpunit-function-mocker": "0.3.0",
                 "phpunit/phpunit": "^4.8",
                 "symfony/phpunit-bridge": "^3.3"
             },
@@ -98,7 +97,7 @@
                 }
             ],
             "description": "Common utilities for all Bolt libraries",
-            "time": "2017-07-29 04:27:55"
+            "time": "2017-08-01T02:10:01+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -2689,9 +2688,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "bolt/common": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
