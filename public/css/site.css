@@ -31,6 +31,11 @@
     background-image: url(/img/slack.svg)
 }
 
+.logo.org{
+    background-image: url(/img/bolt.jpg);
+    background-size: 48px 48px;
+    margin-right: 70px
+}
 .logo.org::after {
     position: absolute;
     display: block;

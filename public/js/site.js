@@ -17,10 +17,9 @@ $(document).ready(function() {
                 button.html('WOOT. Check your email!');
             })
             .fail(function(xhr, status, error) {
-                console.log('fail!');
                 button.addClass('error');
-                if (error === 'Bad Request') {
-                    button.html(xhr.responseJSON);
+                if (xhr.responseJSON === 'already_in_team') {
+                    button.html('Already registered!');
                 } else {
                     button.html('Error occurred');
                 }
