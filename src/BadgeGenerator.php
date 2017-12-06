@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Bolt\Site\SlackInvites;
 
 use DateInterval;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\SimpleCache\CacheInterface;
 use Twig\Environment;
 
@@ -22,15 +25,7 @@ class BadgeGenerator
     /** @var string */
     private $template;
 
-    /**
-     * Constructor.
-     *
-     * @param Slack          $slack
-     * @param CacheInterface $cache
-     * @param Environment    $twig
-     * @param string         $template
-     */
-    public function __construct(Slack $slack, CacheInterface $cache, Environment $twig, $template = '@templates/badge.svg.twig')
+    public function __construct(Slack $slack, CacheItemPoolInterface $cache, Environment $twig, string $template = '@templates/badge.svg.twig')
     {
         $this->slack = $slack;
         $this->cache = $cache;
@@ -39,12 +34,12 @@ class BadgeGenerator
     }
 
     /**
-     * @param string                $type
-     * @param DateInterval|int|null $ttl
+     * @param string       $type
+     * @param DateInterval $ttl
      *
-     * @return mixed
+     * @return string
      */
-    public function get($type, $ttl = 120)
+    public function get(string $type, DateInterval $ttl): string
     {
         $cacheKey = 'badge.' . $type;
         if ($this->cache->has($cacheKey) === false) {

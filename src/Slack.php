@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Bolt\Site\SlackInvites;
 
-use Bolt\Collection\ImmutableBag;
+use Bolt\Collection\Bag;
+use Bolt\Collection\MutableBag;
 use Bolt\Common\Json;
-use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use Psr\SimpleCache\CacheInterface;
+use Http\Client\HttpClient;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * Slack API service.
@@ -15,28 +18,20 @@ use Psr\SimpleCache\CacheInterface;
  */
 class Slack
 {
-    /** @var Client */
-    private $guzzle;
-    /** @var CacheInterface */
+    /** @var HttpClient */
+    private $client;
+    /** @var CacheItemPoolInterface */
     private $cache;
     /** @var string */
     private $team;
     /** @var string */
     private $token;
-    /** @var ImmutableBag */
+    /** @var Bag */
     private $teamInfo;
 
-    /**
-     * Constructor.
-     *
-     * @param Client         $guzzle
-     * @param CacheInterface $cache
-     * @param string         $team
-     * @param string         $token
-     */
-    public function __construct(Client $guzzle, CacheInterface $cache, $team, $token)
+    public function __construct(HttpClient $client, CacheItemPoolInterface $cache, string $team, string $token)
     {
-        $this->guzzle = $guzzle;
+        $this->client = $client;
         $this->cache = $cache;
         $this->team = $team;
         $this->token = $token;
@@ -47,7 +42,7 @@ class Slack
      *
      * @return string
      */
-    public function getTeamName()
+    public function getTeamName(): string
     {
         return $this->getTeamInfo()->getPath('team/name');
     }
@@ -59,7 +54,7 @@ class Slack
      *
      * @return string
      */
-    public function getTeamIcon($width = 132)
+    public function getTeamIcon(int $width = 132): string
     {
         return $this->getTeamInfo()->getPath('team/icon/image_' . $width);
     }
@@ -67,15 +62,15 @@ class Slack
     /**
      * Return the current Slack team's user count.
      *
-     * @return ImmutableBag
+     * @return Bag
      */
-    public function getUserCount()
+    public function getUserCount(): Bag
     {
         $total = 0;
         $active = 0;
         $bots = 0;
 
-        /** @var ImmutableBag $user */
+        /** @var Bag $user */
         foreach ($this->getTeamInfo()->get('users') as $user) {
             if ($user->get('is_bot')) {
                 ++$bots;
@@ -87,7 +82,7 @@ class Slack
             }
         }
 
-        return ImmutableBag::from([
+        return Bag::from([
             'active' => $active,
             'bots'   => $bots,
             'total'  => $total,
@@ -98,9 +93,9 @@ class Slack
     /**
      * Return information about the team.
      *
-     * @return ImmutableBag
+     * @return Bag
      */
-    public function getTeamInfo()
+    public function getTeamInfo(): Bag
     {
         if ($this->teamInfo === null) {
             $this->refresh();
@@ -114,33 +109,64 @@ class Slack
      *
      * @param string $email
      *
-     * @return ImmutableBag
+     * @throws \Http\Client\Exception
+     *
+     * @return Bag
      */
-    public function getInvite($email)
+    public function getInvite(string $email): Bag
     {
         $url = 'https://' . $this->team . '.slack.com/api/users.admin.invite';
         $request = new Request(
             'POST',
             $url,
             ['Content-Type' => 'application/x-www-form-urlencoded'],
-            http_build_query(['token' => $this->token, 'email' => $email])
+            \http_build_query(['token' => $this->token, 'email' => $email])
         );
-        $response = $this->guzzle->send($request)->getBody();
+        $response = $this->client->sendRequest($request)->getBody();
+        $bag = MutableBag::fromRecursive(Json::parse($response));
+        if ($bag->get('error')) {
+            $this->addErrorMessage($bag);
+        }
 
-        return ImmutableBag::fromRecursive(Json::parse($response));
+        return $bag->immutable();
+    }
+
+    private function addErrorMessage(MutableBag $bag): void
+    {
+        $error = $bag->get('error');
+        if ($error === 'already_invited') {
+            $bag->set('error', ['already_invited' => 'Email address has already received an invitation']);
+        } elseif ($error === 'already_in_team') {
+            $bag->set('error', ['already_in_team' => 'Email address is already registered to a member of the team']);
+        } elseif ($error === 'channel_not_found') {
+            $bag->set('error', ['channel_not_found' => 'Provided channel ID does not match a real channel']);
+        } elseif ($error === 'sent_recently') {
+            $bag->set('error', ['sent_recently' => 'Invitation has already been sent recently']);
+        } elseif ($error === 'user_disabled') {
+            $bag->set('error', ['user_disabled' => 'User account has been deactivated']);
+        } elseif ($error === 'missing_scope') {
+            $bag->set('error', ['missing_scope' => 'Using an access_token not authorized for \'client\' scope']);
+        } elseif ($error === 'invalid_email') {
+            $bag->set('error', ['invalid_email' => 'Slack does not recognize this as a valid email addresses, even though it might be valid. This is a known issue.']);
+        } elseif ($error === 'not_allowed') {
+            $bag->set('error', ['not_allowed' => 'When SSO is enabeld this method can not be used to invite new users except guests. The SCIM API needs to be used instead to invite new users. For inviting guests the restricted or ultra_restricted property needs to be provided']);
+        }
     }
 
     /**
      * Refresh Slack data.
      */
-    private function refresh()
+    private function refresh(): void
     {
-        if ($this->cache->has('team.info') === false) {
-            $url = sprintf('https://%s.slack.com/api/rtm.start?token=%s', $this->team, $this->token);
-            $response = $this->guzzle->get($url)->getBody();
-            $this->cache->set('team.info', ImmutableBag::fromRecursive(Json::parse($response)), 600);
+        $item = $this->cache->getItem('team.info');
+        if (!$item->isHit()) {
+            $url = \sprintf('https://%s.slack.com/api/rtm.start?token=%s', $this->team, $this->token);
+            $response = $this->client->get($url)->getBody();
+            $item->set(Bag::fromRecursive(Json::parse($response)));
+            $item->expiresAfter(600);
+            $this->cache->save($item);
         }
 
-        $this->teamInfo = $this->cache->get('team.info');
+        $this->teamInfo = $item->get();
     }
 }
