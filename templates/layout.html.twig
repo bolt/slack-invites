@@ -2,17 +2,31 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Bolt.cm Slack invitation sender</title>
+
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('css/app.css', 'build') }}">
+    {% endblock %}
 </head>
 <body>
 <!-- Main Content -->
 <div class="container">
-    {% block content %}{% endblock %}
+    <div class="splash">
+        <div class="logos">
+            <div class="logo org"></div>
+            <div class="logo slack"></div>
+        </div>
+        {% block content %}{% endblock %}
+    </div>
 </div>
+{% block javascripts %}
+    <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
+    <script type="text/javascript" src="{{ asset('js/app.js', 'build') }}"></script>
+{% endblock %}
 </body>
 </html>
