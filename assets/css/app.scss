@@ -1,8 +1,26 @@
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/variables';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/mixins';
+
+// Reset and dependencies
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/normalize';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/print';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/glyphicons';
+
+// Core CSS
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/scaffolding';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/type';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/code';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/grid';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/tables';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/forms';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/buttons';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/alerts';
+
 .splash {
     width: 300px;
     margin: 10px auto;
     text-align: center;
-    font-family: "Helvetica Neue", Helvetica, Arial
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
 }
 
 @media (max-width: 500px) {
@@ -148,4 +166,9 @@ input:focus {
 
 .avatar {
     margin-top: 10px
+}
+
+#spinner {
+    font-size: 48px;
+    color: red;
 }
