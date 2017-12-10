@@ -50,10 +50,11 @@
 }
 
 .logo.org{
-    background-image: url(/img/bolt.jpg);
-    background-size: 48px 48px;
-    margin-right: 70px
+    background-image: url(/img/bolt.svg);
+    margin-right: 100px;
+    width: 118px;
 }
+
 .logo.org::after {
     position: absolute;
     display: block;
@@ -61,6 +62,7 @@
     top: 15px;
     left: 0;
     width: 300px;
+    margin-left: 30px;
     text-align: center;
     color: #d6d6d6;
     font: 15px Helvetica Neue
