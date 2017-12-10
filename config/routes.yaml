@@ -1,0 +1,19 @@
+slack:
+    path: /
+    methods: [GET|POST]
+    defaults:
+        _controller: 'Bolt\Site\SlackInvites\Controller\Invites:getSlack'
+
+slack_members:
+    path: /members
+    methods: [POST]
+    defaults:
+        _controller: 'Bolt\Site\SlackInvites\Controller\Invites:getSlackMembers'
+
+slackBadge:
+    path: /badge/{type}
+    methods: [GET]
+    defaults:
+        _controller: 'Bolt\Site\SlackInvites\Controller\Invites:getSlackBadge'
+    requirements:
+        type: '(active|bots|ratio|total)'

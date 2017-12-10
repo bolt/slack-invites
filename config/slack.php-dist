@@ -1,4 +1,0 @@
-<?php
-
-$app['slack.team'] = "your-team-name";
-$app['slack.token'] = "your-token";

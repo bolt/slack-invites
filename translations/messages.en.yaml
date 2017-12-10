@@ -1,0 +1,4 @@
+button:
+    invite: 'Get my invite'
+email:
+    placeholder: 'you@yourdomain.com'

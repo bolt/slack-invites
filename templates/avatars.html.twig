@@ -1,0 +1,5 @@
+{% for row in avatars|batch(11) %}
+    <tr>
+        {% for name, avatar in row %}<td><img src="{{ avatar }}" alt="{{ name }}"></td>{% endfor %}
+    </tr>
+{% endfor %}
