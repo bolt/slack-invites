@@ -132,7 +132,7 @@
         "version": "v4.0.1"
     },
     "symfony/flex": {
-        "version": "v1.0.46"
+        "version": "v1.0.48"
     },
     "symfony/form": {
         "version": "v4.0.1"
